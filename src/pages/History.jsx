@@ -2,9 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { data } from "../data/data";
 import Card from "../components/Card";
+import axios from "axios";
 
 export default function History() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -31,6 +34,23 @@ export default function History() {
     searchData();
   }, [searchTerm]);
 
+  const loadImages = async () => {
+    try {
+      const images = await axios.get(
+        "https://ai-image-backend-3bea.onrender.com/api/image/get-images"
+      );
+      console.log(images);
+      setFilteredData(images.data.images);
+      setIsDeleted(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    loadImages();
+  }, [searchData, searchTerm, isDeleted]);
+
   return (
     <div className="my-10 flex flex-col items-center justify-center">
       <section className="flex items-center justify-center gap-3 w-[300px] md:w-1/3 border py-3 px-2 rounded-md">
@@ -52,9 +72,12 @@ export default function History() {
               <li key={index}>
                 <Card
                   cardData={image}
-                  className="flex items-center justify-center min-w-[300px] w-[300px] mx-auto mt-[8%] h-[400px]"
+                  setIsDeleted={setIsDeleted}
+                  isDeleted={isDeleted}
+                  setLoading={setLoading}
+                  className="flex items-center justify-center min-w-[400px] w-[400px] mx-auto mt-[8%] h-[500px]"
                   classNameForContainer="flex flex-col items-center justify-center rounded-md pb-5 px-5 gap-5  shadow-md bg-gray-50 w-full h-full"
-                  ImageClass={"w-[300px] h-full "}
+                  ImageClass={"w-[400px] h-full "}
                 />
               </li>
             );

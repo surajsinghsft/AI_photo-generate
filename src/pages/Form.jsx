@@ -1,8 +1,29 @@
+import axios from "axios";
 import React, { useState } from "react";
+import { ImSpinner2 } from "react-icons/im";
 export default function Form(props) {
+  const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [prompt, setprompt] = useState("");
-  const [url, setUrl] = useState("");
+  // const [url, setUrl] = useState("");
+
+  const loadImage = async () => {
+    // let res;
+    try {
+      let res = await axios.post(
+        "https://ai-image-backend-3bea.onrender.com/api/image/generate-image",
+        { name, prompt }
+      );
+      if (!res) {
+        console.log("image not generated on frontend");
+      }
+      console.log(res);
+      props.setCardData(res.data.image)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handlepromptChange = (e) => {
     setprompt(e.target.value);
   };
@@ -10,20 +31,18 @@ export default function Form(props) {
     setName(e.target.value);
   };
 
-  const handleUrlChange = (e) => {
-    setUrl(e.target.value);
-  };
+  // const handleUrlChange = (e) => {
+  //   setUrl(e.target.value);
+  // };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    props.setCardData({
-      url: url,
-      name: name,
-      prompt: prompt,
-    });
+    setLoading(true);
+    await loadImage();
     setName("");
-    setUrl("");
+    // setUrl("");
     setprompt("");
+    setLoading(false);
   };
 
   return (
@@ -45,7 +64,7 @@ export default function Form(props) {
           required
           title="enter your"
         />
-        <input
+        {/* <input
           type="text"
           name="url"
           placeholder="Enter your name ..."
@@ -54,7 +73,8 @@ export default function Form(props) {
           value={url}
           required
           title="enter your"
-        />
+        /> */}
+
         <textarea
           type="prompt"
           name="peompt"
@@ -66,8 +86,15 @@ export default function Form(props) {
           title="enter your"
         />
 
-        <button className="bg-blue-500 w-1/2 py-3 rounded-md cursor-pointer">
-          Generate
+        <button className="bg-blue-500 w-1/2 py-3 rounded-md cursor-pointer text-center flex items-center justify-center">
+          {loading ? (
+            <ImSpinner2
+              className="text-white   custom-animation animate-spin text-center"
+              size={25}
+            />
+          ) : (
+            "Generate"
+          )}
         </button>
       </form>
     </div>

@@ -10,7 +10,7 @@ export default function Navbar() {
         <div>
           <img src={img} alt="website logo" className="cursor-pointer" />
         </div>
-        <span className="text-orange-400">Arvind Kumar</span>
+        <span className="text-orange-400">Suraj Kushwaha</span>
 
         {url.pathname == "/" ? (
           <Link to="/history">
